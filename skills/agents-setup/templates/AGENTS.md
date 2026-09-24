@@ -12,6 +12,9 @@ When adding support for a new assistant, point its memory file here rather than 
 - Do not invent APIs, schemas, config variables, or external data fields.
 - State assumptions clearly when verification is incomplete.
 - Prefer correctness and maintainability over cleverness.
+- If the repo has `CONTEXT.md` (or `CONTEXT-MAP.md`) or `docs/adr/`, read the relevant
+  parts before exploring code, use the glossary's terms, and call out anything that
+  contradicts an ADR instead of silently overriding it.
 
 ## Code conventions
 
