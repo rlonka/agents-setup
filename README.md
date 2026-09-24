@@ -16,6 +16,9 @@ convention, protected branches), **backs everything up** to `~/.agents/backup/<t
 audits your existing agent config (e.g. tokens saved in rules by "always allow") and
 finally **verifies** everything in a throwaway repository.
 
+The global context template, [`templates/AGENTS.md`](skills/agents-setup/templates/AGENTS.md),
+is the author's own global `AGENTS.md`, used daily with all three tools.
+
 ## Installation
 
 ```bash
