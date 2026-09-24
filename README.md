@@ -1,63 +1,64 @@
 # agents-setup
 
-Skill, který na tvém stroji nastaví sdílené prostředí pro AI coding agenty
-**Claude Code, Codex a OpenCode** — tak, aby se všechny tři řídily stejnými pravidly:
+A skill that sets up a shared environment for the AI coding agents
+**Claude Code, Codex and OpenCode** on your machine, so that all three follow the same rules:
 
-| Modul | Co udělá |
+| Module | What it does |
 |---|---|
-| **A. Globální context** | Jeden `~/.agents/AGENTS.md`, na který ukazují symlinky `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.config/opencode/AGENTS.md` |
-| **B. Sdílené skilly** | `~/.agents/skills/`, pro Claude Code zpřístupněné symlinky |
-| **C. Git hooky** | Globální `core.hooksPath`: gitleaks kontrola tajemství při commitu, volitelně zákaz push na `main`/`master`; hooky jednotlivých repozitářů fungují dál |
-| **D. Guardrails** | Jeden `~/.agents/guardrails.yaml` → deny/ask pravidla vygenerovaná do konfigurace všech tří nástrojů |
+| **A. Global context** | One `~/.agents/AGENTS.md`, with `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md` and `~/.config/opencode/AGENTS.md` as symlinks to it |
+| **B. Shared skills** | `~/.agents/skills/`, exposed to Claude Code through symlinks |
+| **C. Git hooks** | Global `core.hooksPath`: gitleaks secret scan on commit, optional block of pushes to `main`/`master`; repositories' own hooks keep working |
+| **D. Guardrails** | One `~/.agents/guardrails.yaml` → deny/ask rules generated into the config of all three tools |
 
-Skill nejdřív zjistí stav, zeptá se na volby (moduly, commit konvence, chráněné větve),
-**všechno zazálohuje** do `~/.agents/backup/<čas>/`, existující context soubory **sloučí**
-(nepřepíše), nastaví vybrané moduly, projde tvoje stávající konfigurace (např. tokeny
-uložené v pravidlech po „always allow“) a nakonec vše **ověří** v dočasném repu.
+The skill first inspects the current state, asks about the options (modules, commit
+convention, protected branches), **backs everything up** to `~/.agents/backup/<timestamp>/`,
+**merges** existing context files (never overwrites them), sets up the selected modules,
+audits your existing agent config (e.g. tokens saved in rules by "always allow") and
+finally **verifies** everything in a throwaway repository.
 
-## Instalace
+## Installation
 
 ```bash
 DISABLE_TELEMETRY=1 npx skills add git@code.it4i.cz:radekl/agents-setup.git -g
 ```
 
-- SSH, protože repo je interní a klon přes HTTPS vyžaduje přihlášení. HTTPS
-  (`https://code.it4i.cz/radekl/agents-setup.git`) funguje jen s nastaveným git credential
-  helperem.
-- `DISABLE_TELEMETRY=1`: Skills CLI u zdrojů mimo veřejný GitHub může v telemetrii
-  odeslat URL repozitáře.
+- SSH, because the project is internal and cloning over HTTPS requires credentials. HTTPS
+  (`https://code.it4i.cz/radekl/agents-setup.git`) works only with a configured git
+  credential helper.
+- `DISABLE_TELEMETRY=1`: for sources other than public GitHub, the Skills CLI may send the
+  repository URL in its telemetry.
 
-## Spuštění
+## Usage
 
-Skill se spouští **jen na výslovné vyžádání** — v kterémkoli ze tří nástrojů napiš např.
-*„spusť skill agents-setup“* (v Claude Code `/agents-setup`).
+The skill runs **only when explicitly requested** — in any of the three tools, ask e.g.
+*"run the agents-setup skill"* (in Claude Code: `/agents-setup`).
 
-## Požadavky
+## Requirements
 
-- git, Python 3 s PyYAML (nebo `uv`), `curl`
-- Linux (x64/arm64) nebo macOS s Homebrew — kvůli instalaci gitleaks
+- git, Python 3 with PyYAML (or `uv`), `curl`
+- Linux (x64/arm64) or macOS with Homebrew — for installing gitleaks
 
-## Vrácení
+## Undo
 
 ```bash
-git config --global --unset core.hooksPath      # git hooky off
-# guardrails: vyprázdni seznamy v ~/.agents/guardrails.yaml a spusť znovu
+git config --global --unset core.hooksPath      # git hooks off
+# guardrails: empty the lists in ~/.agents/guardrails.yaml and rerun
 python3 ~/.agents/sync-guardrails.py
-# context soubory: obnov ze zálohy v ~/.agents/backup/<čas>/
+# context files: restore from the backup in ~/.agents/backup/<timestamp>/
 ```
 
-## Obsah repa
+## Repository layout
 
 ```
 skills/agents-setup/
-├── SKILL.md                    postup pro agenta
+├── SKILL.md                    procedure for the agent
 ├── templates/
-│   ├── AGENTS.md               šablona globálního contextu
-│   └── guardrails.yaml         výchozí pravidla
+│   ├── AGENTS.md               global context template
+│   └── guardrails.yaml         default rules
 └── scripts/
-    ├── run-hook                dispatcher git hooků
+    ├── run-hook                git hook dispatcher
     ├── install-git-hooks.sh
     ├── install-gitleaks.sh
     ├── sync-guardrails.py      guardrails.yaml → Claude / Codex / OpenCode
-    └── verify.sh               end-to-end ověření
+    └── verify.sh               end-to-end verification
 ```
