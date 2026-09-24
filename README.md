@@ -19,14 +19,11 @@ finally **verifies** everything in a throwaway repository.
 ## Installation
 
 ```bash
-DISABLE_TELEMETRY=1 npx skills add git@code.it4i.cz:radekl/agents-setup.git -g
+npx skills add rlonka/agents-setup -g
 ```
 
-- SSH, because the project is internal and cloning over HTTPS requires credentials. HTTPS
-  (`https://code.it4i.cz/radekl/agents-setup.git`) works only with a configured git
-  credential helper.
-- `DISABLE_TELEMETRY=1`: for sources other than public GitHub, the Skills CLI may send the
-  repository URL in its telemetry.
+This uses the [Skills CLI](https://github.com/vercel-labs/skills); `npx skills update`
+picks up new versions later. Add `DISABLE_TELEMETRY=1` in front to opt out of its telemetry.
 
 ## Usage
 
@@ -62,3 +59,7 @@ skills/agents-setup/
     ├── sync-guardrails.py      guardrails.yaml → Claude / Codex / OpenCode
     └── verify.sh               end-to-end verification
 ```
+
+## License
+
+[MIT](LICENSE)
