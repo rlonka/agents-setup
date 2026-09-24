@@ -22,8 +22,29 @@ finally **verifies** everything in a throwaway repository.
 npx skills add rlonka/agents-setup -g
 ```
 
-This uses the [Skills CLI](https://github.com/vercel-labs/skills); `npx skills update`
-picks up new versions later. Add `DISABLE_TELEMETRY=1` in front to opt out of its telemetry.
+This uses the [Skills CLI](https://github.com/vercel-labs/skills) and needs Node.js;
+`npx skills update` picks up new versions later. Add `DISABLE_TELEMETRY=1` in front to opt
+out of its telemetry.
+
+### Manual installation (without Node.js)
+
+Clone the repository and link the skill into each tool's skills directory:
+
+```bash
+git clone https://github.com/rlonka/agents-setup.git ~/.agents/src/agents-setup
+mkdir -p ~/.agents/skills
+ln -s ~/.agents/src/agents-setup/skills/agents-setup ~/.agents/skills/agents-setup
+
+# Claude Code
+mkdir -p ~/.claude/skills
+ln -s ../../.agents/skills/agents-setup ~/.claude/skills/agents-setup
+# Codex
+mkdir -p ~/.codex/skills
+ln -s ../../.agents/skills/agents-setup ~/.codex/skills/agents-setup
+# OpenCode: nothing to do, it reads ~/.agents/skills directly
+```
+
+Skip the lines for tools you don't use. To update: `git -C ~/.agents/src/agents-setup pull`.
 
 ## Usage
 
