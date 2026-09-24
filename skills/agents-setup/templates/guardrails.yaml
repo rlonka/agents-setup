@@ -1,0 +1,33 @@
+# Agent guardrails shared by Claude Code, Codex and OpenCode.
+# Single source of truth: edit this file, then run
+#   python3 ~/.agents/sync-guardrails.py
+#
+# Entries are command prefixes matched token by token: "git push --force" also covers
+# "git push --force origin x", but NOT "git push origin --force" — Codex rules are
+# prefix-only, so all three tools are generated the same way. This is the soft layer;
+# the hard stops (secrets in commits, pushes to protected branches) are the global git
+# hooks in ~/.agents/git-hooks/.
+#
+# There is deliberately no "allow" list: allowlists are per-project convenience, keep
+# them in each tool's project settings.
+
+deny:
+  - git push --force
+  - git push --force-with-lease
+  - git push -f
+  - git push --no-verify
+  - git commit --no-verify
+  - git commit -n
+  - git reset --hard
+  - git clean
+  - git branch -D
+
+ask:
+  - git push
+  - git config --global                # an agent could unset core.hooksPath
+  - git config agents.protectedBranches
+  - rm -rf
+
+# Claude Code only: Codex has no read rules, OpenCode denies .env reads by default.
+deny_read:
+  - "**/.env"

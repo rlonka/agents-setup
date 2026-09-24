@@ -1,0 +1,50 @@
+#!/bin/sh
+# Global git hook dispatcher, enabled with:
+#   git config --global core.hooksPath ~/.agents/git-hooks
+#
+# Every hook name in this directory is a symlink to this script. It runs the global
+# check for that hook (if there is one), then the repository's own hook from
+# .git/hooks, which core.hooksPath would otherwise silently disable.
+#
+# Protected branches (pre-push): git config agents.protectedBranches "main master"
+# (the default when unset); set it to "" globally or per repository to allow pushes.
+# Intentional one-off exception (you, not an agent): git commit/push --no-verify.
+
+hook=$(basename "$0")
+repo_hook="$(git rev-parse --git-common-dir)/hooks/$hook"
+
+case "$hook" in
+pre-commit)
+    if ! command -v gitleaks >/dev/null 2>&1; then
+        echo "pre-commit: gitleaks is not installed; refusing to commit without a secret scan." >&2
+        exit 1
+    fi
+    if ! gitleaks git --pre-commit --staged --redact --no-banner --verbose --log-level warn; then
+        echo "pre-commit: possible secret in the staged changes (see above)." >&2
+        echo "False positive? Add a '# gitleaks:allow' comment on the line or a .gitleaksignore entry." >&2
+        exit 1
+    fi
+    ;;
+pre-push)
+    # stdin: "<local ref> <local sha> <remote ref> <remote sha>" per pushed ref
+    refs=$(cat)
+    protected=$(git config --get agents.protectedBranches) || protected="main master"
+    blocked=$(printf '%s\n' "$refs" | awk -v p=" $protected " '
+        $3 ~ /^refs\/heads\// { b = substr($3, 12); if (index(p, " " b " ")) print b }')
+    if [ -n "$blocked" ]; then
+        echo "pre-push: refusing to push to protected branch: $(echo $blocked) — open a merge request instead." >&2
+        echo "Intentional? git push --no-verify (or: git config agents.protectedBranches \"\" in this repo)" >&2
+        exit 1
+    fi
+    [ -x "$repo_hook" ] || exit 0
+    if [ -n "$refs" ]; then
+        printf '%s\n' "$refs" | "$repo_hook" "$@"
+    else
+        "$repo_hook" "$@" </dev/null
+    fi
+    exit $?
+    ;;
+esac
+
+[ -x "$repo_hook" ] && exec "$repo_hook" "$@"
+exit 0
