@@ -18,11 +18,14 @@ uložené v pravidlech po „always allow“) a nakonec vše **ověří** v doč
 ## Instalace
 
 ```bash
-DISABLE_TELEMETRY=1 npx skills add https://code.it4i.cz/radekl/agents-setup.git -g
+DISABLE_TELEMETRY=1 npx skills add git@code.it4i.cz:radekl/agents-setup.git -g
 ```
 
-`DISABLE_TELEMETRY=1`: Skills CLI u zdrojů mimo veřejný GitHub může v telemetrii
-odeslat URL repozitáře.
+- SSH, protože repo je interní a klon přes HTTPS vyžaduje přihlášení. HTTPS
+  (`https://code.it4i.cz/radekl/agents-setup.git`) funguje jen s nastaveným git credential
+  helperem.
+- `DISABLE_TELEMETRY=1`: Skills CLI u zdrojů mimo veřejný GitHub může v telemetrii
+  odeslat URL repozitáře.
 
 ## Spuštění
 
