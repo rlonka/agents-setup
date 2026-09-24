@@ -6,12 +6,12 @@ A skill that sets up a shared environment for the AI coding agents
 | Module | What it does |
 |---|---|
 | **A. Global context** | One `~/.agents/AGENTS.md`, with `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md` and `~/.config/opencode/AGENTS.md` as symlinks to it |
-| **B. Shared skills** | `~/.agents/skills/`, exposed to Claude Code through symlinks |
+| **B. Shared skills** | `~/.agents/skills/`, exposed to Claude Code through symlinks; optionally the [agent-workflow](https://github.com/rlonka/agent-workflow) skills (plan → issue → merge request → cross-agent review → CI) |
 | **C. Git hooks** | Global `core.hooksPath`: gitleaks secret scan on commit, optional block of pushes to `main`/`master`; repositories' own hooks keep working |
 | **D. Guardrails** | One `~/.agents/guardrails.yaml` → deny/ask rules generated into the config of all three tools |
 
 The skill first inspects the current state, asks about the options (modules, commit
-convention, protected branches), **backs everything up** to `~/.agents/backup/<timestamp>/`,
+convention, protected branches, agent-workflow skills), **backs everything up** to `~/.agents/backup/<timestamp>/`,
 **merges** existing context files (never overwrites them), sets up the selected modules,
 audits your existing agent config (e.g. tokens saved in rules by "always allow") and
 finally **verifies** everything in a throwaway repository.
@@ -80,6 +80,7 @@ skills/agents-setup/
     ├── run-hook                git hook dispatcher
     ├── install-git-hooks.sh
     ├── install-gitleaks.sh
+    ├── install-agent-workflow.sh
     ├── sync-guardrails.py      guardrails.yaml → Claude / Codex / OpenCode
     └── verify.sh               end-to-end verification
 ```

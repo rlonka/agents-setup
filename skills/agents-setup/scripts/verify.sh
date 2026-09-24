@@ -24,6 +24,15 @@ if [ -f "$HOME/.agents/AGENTS.md" ]; then
     done
 fi
 
+if [ -e "$HOME/.agents/skills/plan-to-issues" ]; then
+    echo "== agent-workflow skills"
+    for s in plan-to-issues implement-issue review-mr address-review await-ci domain-docs; do
+        check "skill $s is readable" 0 test -r "$HOME/.agents/skills/$s/SKILL.md"
+        [ -d "$HOME/.claude" ] && check "skill $s is visible to Claude Code" 0 test -r "$HOME/.claude/skills/$s/SKILL.md"
+    done
+    [ -d "$HOME/.config/opencode" ] && check "OpenCode command /plan-to-issues exists" 0 test -r "$HOME/.config/opencode/commands/plan-to-issues.md"
+fi
+
 hooks=$(git config --global --get core.hooksPath || true)
 if [ "$hooks" = "$HOME/.agents/git-hooks" ]; then
     echo "== git hooks"

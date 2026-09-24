@@ -40,6 +40,7 @@ Collect and show the user a short summary:
   `~/.agents/git-hooks` (e.g. husky, pre-commit), module C needs a decision.
 - `command -v gitleaks`; `python3 -c "import yaml"` (needed by module D).
 - `~/.config/opencode/opencode.jsonc`: if it exists, module D cannot write OpenCode config.
+- Whether the agent-workflow skills are installed (`~/.agents/skills/plan-to-issues`).
 - Whether this setup is already (partly) installed; then treat the run as an update:
   show diffs against the templates instead of recreating files.
 
@@ -54,6 +55,10 @@ Ask in one round (use the tool's question UI if it has one):
 3. **Protected branches** (module C): block pushes to `main master` (default), a custom
    list, or no blocking.
 4. **No-AI-attribution rule** (template's *Attribution* section): keep (default) or drop.
+5. **agent-workflow skills** (module B): also install the skills from
+   [rlonka/agent-workflow](https://github.com/rlonka/agent-workflow), a plan → issue →
+   merge request → review by a different agent → CI loop where merging stays with a
+   human? Default: no. If they are already installed, offer an update instead.
 
 If `core.hooksPath` already points elsewhere, ask whether to replace it; replacing it
 disables that tool's hooks unless they are re-installed into the repositories.
@@ -86,6 +91,12 @@ with third-party providers (Bedrock etc.); mention it if relevant.
    OpenCode reads `~/.agents/skills` natively.
 3. Tell the user that installing further skills with the Skills CLI
    (`npx skills add <source> -g`) keeps this layout by itself.
+4. If the user chose the agent-workflow skills: `sh scripts/install-agent-workflow.sh`.
+   It clones the repository to `~/.agents/src/agent-workflow`, links the skills in the
+   same layout, copies the OpenCode slash commands when OpenCode is present, and skips
+   any name already installed another way, e.g. linked to a working copy (report
+   those). Rerunning it updates. Its merge-stays-with-a-human rule relies on module D's `deny` for
+   `gh pr merge` / `glab mr merge`; mention that if module D was not chosen.
 
 ## Step 6: Git hooks (module C)
 
