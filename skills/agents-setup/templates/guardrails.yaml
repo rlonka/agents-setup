@@ -21,6 +21,8 @@ deny:
   - git reset --hard
   - git clean
   - git branch -D
+  - gh pr merge                        # merging stays with a human
+  - glab mr merge
 
 ask:
   - git push
