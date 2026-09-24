@@ -3,7 +3,7 @@
 #   python3 ~/.agents/sync-guardrails.py
 #
 # Entries are command prefixes matched token by token: "git push --force" also covers
-# "git push --force origin x", but NOT "git push origin --force" — Codex rules are
+# "git push --force origin x", but NOT "git push origin --force"; Codex rules are
 # prefix-only, so all three tools are generated the same way. This is the soft layer;
 # the hard stops (secrets in commits, pushes to protected branches) are the global git
 # hooks in ~/.agents/git-hooks/.

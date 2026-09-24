@@ -20,7 +20,7 @@ The project's conventions win; don't layer a generic guide on top of them.
 1. **Project config first.** Look for formatter/linter config (`pyproject.toml`,
    `ruff.toml`, `.editorconfig`, `.prettierrc`, eslint, pre-commit hooks, CI) and follow
    it. Where it disagrees with PEP 8 (e.g. black/ruff: 88 columns, double quotes), the
-   config wins — don't "fix" formatted code back to PEP 8.
+   config wins; don't "fix" formatted code back to PEP 8.
 2. **No config → match the surrounding code.**
 3. **Nothing to match (new file or project) → Python defaults:** PEP 8 as `ruff format`
    would produce it, imports grouped stdlib / third-party / local.
@@ -82,7 +82,7 @@ in a project `AGENTS.md`.
 
 - No features beyond what was asked, no abstractions for single-use code.
 - No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios — but errors that *can* happen must never
+- No error handling for impossible scenarios, but errors that *can* happen must never
   pass silently: handle them, or let them propagate.
 - If you write 200 lines and it could be 50, rewrite it.
 
@@ -95,7 +95,7 @@ checks, a shared abstraction, or a deliberate seam. Follow the project when it d
 
 - Don't "improve" adjacent code, comments, or formatting; don't refactor what isn't broken.
 - Match existing style, even if you'd do it differently.
-- Notice unrelated dead code or lint findings? Mention them — don't fix them. A whole-tree
+- Notice unrelated dead code or lint findings? Mention them, don't fix them. A whole-tree
   `--fix` on a repo that was never clean produces a diff nobody asked for.
 - Remove imports/variables/functions that *your* changes orphaned, and nothing else.
 
@@ -105,7 +105,7 @@ The test: every changed line should trace directly to what the user asked for.
 
 **Define success criteria. Loop until verified.**
 
-Turn tasks into verifiable goals — "add validation" → "write tests for invalid inputs, then
+Turn tasks into verifiable goals: "add validation" → "write tests for invalid inputs, then
 make them pass"; "fix the bug" → "write a test that reproduces it, then make it pass".
 For multi-step work, state the plan as steps with a verification check each.
 

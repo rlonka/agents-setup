@@ -30,13 +30,13 @@ DISABLE_TELEMETRY=1 npx skills add git@code.it4i.cz:radekl/agents-setup.git -g
 
 ## Usage
 
-The skill runs **only when explicitly requested** — in any of the three tools, ask e.g.
+The skill runs **only when explicitly requested**. In any of the three tools, ask e.g.
 *"run the agents-setup skill"* (in Claude Code: `/agents-setup`).
 
 ## Requirements
 
 - git, Python 3 with PyYAML (or `uv`), `curl`
-- Linux (x64/arm64) or macOS with Homebrew — for installing gitleaks
+- Linux (x64/arm64) or macOS with Homebrew, for installing gitleaks
 
 ## Undo
 
