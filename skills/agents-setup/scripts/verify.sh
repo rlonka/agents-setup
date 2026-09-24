@@ -31,7 +31,9 @@ if [ "$hooks" = "$HOME/.agents/git-hooks" ]; then
     trap 'rm -rf "$tmp"' EXIT
     git init -q --bare "$tmp/remote.git"
     git init -q -b main "$tmp/repo"
-    cd "$tmp/repo"
+    start=$PWD
+    cd "$tmp/repo" || exit 1
+    # shellcheck disable=SC2317  # g is only called indirectly, through check "$@"
     g() { git -c user.name=verify -c user.email=verify@example.invalid "$@"; }
     echo hello > a.txt && git add a.txt
     check "clean commit passes" 0 g commit -qm "test: clean"
@@ -49,7 +51,7 @@ if [ "$hooks" = "$HOME/.agents/git-hooks" ]; then
     else
         echo "SKIP  push to a protected branch (protection disabled: agents.protectedBranches is empty)"
     fi
-    cd - >/dev/null
+    cd "$start" || exit 1
 fi
 
 rules="${CODEX_HOME:-$HOME/.codex}/rules/guardrails.rules"

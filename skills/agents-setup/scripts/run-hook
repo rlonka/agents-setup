@@ -32,6 +32,7 @@ pre-push)
     blocked=$(printf '%s\n' "$refs" | awk -v p=" $protected " '
         $3 ~ /^refs\/heads\// { b = substr($3, 12); if (index(p, " " b " ")) print b }')
     if [ -n "$blocked" ]; then
+        # shellcheck disable=SC2116,SC2086  # unquoted on purpose: joins the branch lines with spaces
         echo "pre-push: refusing to push to protected branch: $(echo $blocked); open a merge request instead." >&2
         echo "Intentional? git push --no-verify (or: git config agents.protectedBranches \"\" in this repo)" >&2
         exit 1
